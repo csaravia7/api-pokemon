@@ -28,9 +28,9 @@ public class PokemonClient {
 
     @RestController
     @RequestMapping("/pokemon")
-    public static class PokemonController {
+    public static class PokemonControllerv1 {
 
-        private static final Logger logger = LogManager.getLogger(PokemonController.class);
+        private static final Logger logger = LogManager.getLogger(PokemonControllerv1.class);
 
         private static final String API_BASE = "https://pokeapi.co/api/v2/pokemon/";
         private final HttpClient httpClient = HttpClient.newBuilder()

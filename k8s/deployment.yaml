@@ -18,6 +18,7 @@ spec:
       containers:
         - name: pokemon-api-client
           image: rasec777/pokemon-api-client:1.0.0
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           readinessProbe:

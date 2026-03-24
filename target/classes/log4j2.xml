@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.example.pokemon" level="DEBUG" additivity="false">
+        <Logger name="com.csaravia.pokemon" level="DEBUG" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="INFO">
