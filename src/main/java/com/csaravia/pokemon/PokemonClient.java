@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,16 +28,43 @@ public class PokemonClient {
     }
 
     @RestController
+    public static class HealthController {
+        @GetMapping("/health")
+        public ResponseEntity<String> health() {
+            return ResponseEntity.ok("OK");
+        }
+    }
+
+    @RestController
+    @CrossOrigin(origins = "*")
     @RequestMapping("/pokemon")
     public static class PokemonControllerv1 {
 
         private static final Logger logger = LogManager.getLogger(PokemonControllerv1.class);
 
         private static final String API_BASE = "https://pokeapi.co/api/v2/pokemon/";
+        private static final String API_LIST_URL = "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0";
         private final HttpClient httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
         private final ObjectMapper objectMapper = new ObjectMapper();
+
+        @GetMapping
+        public ResponseEntity<String> getAllPokemon() {
+            logger.info("Recibida solicitud para listar todos los pokemones");
+            try {
+                String json = fetchResource(API_LIST_URL, "listado de pokemones");
+                logger.info("Listado de pokemones obtenido exitosamente");
+                return ResponseEntity.ok(json);
+            } catch (IOException e) {
+                logger.error("Error al llamar API externa para listado de pokemones: {}", e.getMessage(), e);
+                return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Error al llamar API externa: " + e.getMessage());
+            } catch (InterruptedException e) {
+                logger.warn("Solicitud interrumpida para listado de pokemones", e);
+                Thread.currentThread().interrupt();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Solicitud interrumpida");
+            }
+        }
 
         @GetMapping("/{nameOrId}")
         public ResponseEntity<String> getPokemon(@PathVariable("nameOrId") String nameOrId) {
@@ -57,7 +85,11 @@ public class PokemonClient {
 
         private String fetchPokemon(String nameOrId) throws IOException, InterruptedException {
             String url = API_BASE + nameOrId.toLowerCase().trim();
-            logger.debug("URL construida para API: {}", url);
+            return fetchResource(url, "pokemon " + nameOrId);
+        }
+
+        private String fetchResource(String url, String resourceDescription) throws IOException, InterruptedException {
+            logger.debug("URL construida para {}: {}", resourceDescription, url);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(Duration.ofSeconds(10))
@@ -73,10 +105,9 @@ public class PokemonClient {
                 throw new IOException("HTTP " + response.statusCode() + " - " + response.body());
             }
             JsonNode json = objectMapper.readTree(response.body());
-            logger.debug("JSON parseado exitosamente para {}", nameOrId);
+            logger.debug("JSON parseado exitosamente para {}", resourceDescription);
             String jsonString = json.toString();
-            logger.info("Retornando JSON de {} caracteres para {}", jsonString.length(), nameOrId);
-            // Optional: map/filtrar campos si necesitas solo subset
+            logger.info("Retornando JSON de {} caracteres para {}", jsonString.length(), resourceDescription);
             return jsonString;
         }
     }

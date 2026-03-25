@@ -1,2 +1,3 @@
-com/csaravia/pokemon/PokemonClient.class
 com/csaravia/pokemon/PokemonClient$PokemonControllerv1.class
+com/csaravia/pokemon/PokemonClient$HealthController.class
+com/csaravia/pokemon/PokemonClient.class

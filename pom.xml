@@ -5,7 +5,7 @@
 
     <groupId>com.csaravia</groupId>
     <artifactId>pokemon-api-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>pokemon-api-client</name>
@@ -42,15 +42,17 @@
     </dependencies>
 
     <build>
+        <finalName>pokemon-api-client</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <release>${java.version}</release>
-                </configuration>
-            </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+                 <version>3.11.0</version>
+                 <configuration>
+                     <release>${java.version}</release>
+                     <parameters>true</parameters>
+                 </configuration>
+             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

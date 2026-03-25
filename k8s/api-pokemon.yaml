@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pokemon-api-client
+  namespace: poke-api
+  labels:
+    app: pokemon-api-client
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pokemon-api-client
+  template:
+    metadata:
+      labels:
+        app: pokemon-api-client
+    spec:
+      containers:
+        - name: pokemon-api-client
+          image: rasec777/pokemon-api-client:1.0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pokemon-api-client-svc
+  namespace: poke-api
+spec:
+  selector:
+    app: pokemon-api-client
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081
+  type: ClusterIP

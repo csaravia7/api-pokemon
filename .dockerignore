@@ -1,15 +1,6 @@
-.vscode/
-.git/
-.gitignore
+target
+.git
+.vscode
+.copilot
 README.md
-*.md
-.DS_Store
-.env
-.env.local
-node_modules/
-.mvn/
-mvnw
-mvnw.cmd
-# Excluir todo en target EXCEPTO el JAR
-target/*
-!target/pokemon-api-client-1.0.0.jar
+k8s
